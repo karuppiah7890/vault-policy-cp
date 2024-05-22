@@ -341,6 +341,106 @@ Code: 400. Errors:
 * 'policy' parameter not supplied or empty
 ```
 
+You can also notice that the `root` Vault Policy is empty if you try to read the policy using Vault CLI, but using `vault read` command, as `vault policy read` command does **NOT** workout here, probably because they (Vault CLI developers) put some check there and removed the `root` policy, hence the `No policy named: root` error as seen below -
+
+```bash
+# straightforward way to list
+$ vault policy list
+allow_secrets
+allow_stage_kv_secrets
+allow_test_kv_secrets
+default
+root
+
+# straightforward way to read a policy generally
+$ vault policy read allow_secrets
+path "secret/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+# straightforward way to read but it doesn't work for root policy
+$ vault policy read root
+No policy named: root
+
+# a bit complicated way to list - needs knowledge about list API and the API
+# path / endpoint
+$ vault list sys/policies/acl
+Keys
+----
+allow_secrets
+allow_stage_kv_secrets
+allow_test_kv_secrets
+default
+root
+
+# You can also put an extra forward slash ("/") at the end of the API path like
+# the below, near `acl`
+$ vault list sys/policies/acl/
+Keys
+----
+allow_secrets
+allow_stage_kv_secrets
+allow_test_kv_secrets
+default
+root
+
+# a bit complicated way to read - needs knowledge about read API and the API
+# path / endpoint
+$ vault read sys/policies/acl/allow_secrets
+Key       Value
+---       -----
+name      allow_secrets
+policy    path "secret/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+# a bit complicated way to read, and it works for root policy, showing that
+# the `root` policy is empty
+$ vault read sys/policies/acl/root
+Key       Value
+---       -----
+name      root
+policy    n/a
+```
+
+Note: If you try to copy the any Vault Policy, other than `root`, from source Vault to destination Vault, but with the name of `root` in the destination Vault, it will throw an error similar to below as one cannot write to the `root` policy in general, it's not allowed -
+
+```bash
+$ export SOURCE_VAULT_ADDR='https://127.0.0.1:8200'
+$ export SOURCE_VAULT_TOKEN="some-big-token-here"
+$ export SOURCE_VAULT_CACERT=$HOME/vault-ca.crt
+
+$ export DESTINATION_VAULT_ADDR='http://127.0.0.1:8300'
+$ export DESTINATION_VAULT_TOKEN="root"
+
+$ ./vault-policy-cp allow_secrets root
+
+copying `allow_secrets` policy in source vault to `root` policy in destination vault
+
+source vault policy `allow_secrets` rules: path "secret/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+error writing `root` vault policy to destination vault: Error making API request.
+
+URL: PUT http://127.0.0.1:8300/v1/sys/policies/acl/root
+Code: 400. Errors:
+
+* cannot update "root" policy
+```
+
+You can also notice that it's not allowed to write to the `root` policy in Vault in general by doing something like this in the source or destination Vault -
+
+```bash
+$ vault policy write root /Users/karuppiah.n/every-day-log/allow_test_kv_secrets.hcl
+Error uploading policy: Error making API request.
+
+URL: PUT https://127.0.0.1:8200/v1/sys/policies/acl/root
+Code: 400. Errors:
+
+* cannot update "root" policy
+```
+
 Note: If the Vault Token / Credentials used for the destination Vault is not valid / wrong / does not have enough access, then the tool throws errors similar to this -
 
 ```bash
