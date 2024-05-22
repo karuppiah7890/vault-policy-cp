@@ -530,3 +530,7 @@ Talking about future ideas, here are some of the ideas for the future -
   }
 ]
 ```
+
+- Give warning to user about usage of root policy as source Vault Policy, so that they don't have to read the docs so much to understand this information, so that the error thrown by the tool is more clear and they have more context. This is because - empty `root` Vault Policy at source, causing no policy parameter to be passed for copy to destination, while the policy parameter is required.
+
+- Give warning to user about usage of root policy as destination Vault Policy with source Vault Policy being anything other than root policy, so that the user does not have to read the docs so much to understand this information, so that the error thrown by the tool is more clear and they have more context. This error will be because root policy cannot be updated in Vault in generaly. By the way, if they give root policy as the source Vault Policy with root policy as the destination Vault Policy - that will also give error but for different reason - that is - empty `root` Vault Policy at source, causing no policy parameter to be passed for copy to destination, while the policy parameter is required.
