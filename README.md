@@ -10,7 +10,7 @@ Note: We have tested this only with some versions of Vault (like v1.15.x). So be
 
 Note ⚠️‼️🚨: If the destination Vault has some policies already defined with the same name as the source Vault, when copying from source Vault to destination Vault, it will be overwritten! All the Vault Policies in source Vault will be present in destination Vault. If the destination Vault has some extra Vault Policies configured, it might have those untouched and intact. This scenario has NOT been tested currently though
 
-Note: This does NOT copy the `default` and `root` Vault Policy as Vault does not support updating it / changing it
+Note: This does NOT copy the `root` Vault Policy as Vault does not support updating it / changing it, which will happen when the tool tries to copy the `root` Vault Policy from the source Vault to the destination Vault - reading from the source Vault will succeed but writing to the destination Vault will fail / throw error, see below. Also, `root` Vault Policy is just an empty policy, with no content. I believe it's just a placeholder policy which is assumed to have all the access to Vault
 
 ## Building
 
