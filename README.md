@@ -12,12 +12,6 @@ Note ⚠️‼️🚨: If the destination Vault has some policies already define
 
 Note: This does NOT copy the `default` and `root` Vault Policy as Vault does not support updating it / changing it
 
-Future version ideas:
-- Support for copying Vault Policies referred to in the Kubernetes Auth Method Roles (Roles Configuration) from source Vault to destination Vault
-- Support for providing the Token Reviewer JWT Token as user input, say through environment variable, so that you can copy that to destination Vault and configure it as part of Kubernetes Auth Method Configuration, since it CANNOT be read from the source Vault through the Vault API
-- Remove log verbosity for default settings. It's too verbose now, by default.
-- Remove log which shows no information (`nil`) about the data copied to destination Vault, as Write API does NOT seem to be returning any data in the reponse, so, we can just ignore it
-
 ## Building
 
 ```bash
