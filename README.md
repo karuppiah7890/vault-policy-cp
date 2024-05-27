@@ -148,8 +148,6 @@ Destination Vault, it's a local dev Vault server, with no HTTPS, with token as `
 $ vault server -dev -dev-root-token-id root -dev-listen-address 127.0.0.1:8300
 ```
 
-We see that it has no auth enabled.
-
 I'm using the Vault Root Token here for full access
 
 ```bash
@@ -528,3 +526,5 @@ Talking about future ideas, here are some of the ideas for the future -
 - Give warning to user about usage of root policy as source Vault Policy, so that they don't have to read the docs so much to understand this information, so that the error thrown by the tool is more clear and they have more context. This is because - empty `root` Vault Policy at source, causing no policy parameter to be passed for copy to destination, while the policy parameter is required.
 
 - Give warning to user about usage of root policy as destination Vault Policy with source Vault Policy being anything other than root policy, so that the user does not have to read the docs so much to understand this information, so that the error thrown by the tool is more clear and they have more context. This error will be because root policy cannot be updated in Vault in generaly. By the way, if they give root policy as the source Vault Policy with root policy as the destination Vault Policy - that will also give error but for different reason - that is - empty `root` Vault Policy at source, causing no policy parameter to be passed for copy to destination, while the policy parameter is required.
+
+- Get rid of `root` Vault policy from the output that says `copying the following vault policies in source vault to destination vault` as it can be confusing for the user to see that the `root` Vauly policy is being copied but in reality it's an empty policy and does not have any content and does **NOT** get copied by the tool and that's what we say too in the docs. It's a major mismatch in the tool's behaviour / display information and the tool's documentation, especially it's reality
